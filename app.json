@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "AgroScan IA",
+    "slug": "agroscan-ia",
+    "version": "1.0.0",
+    "sdkVersion": "54.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "backgroundColor": "#1a4a2e"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.agroscan.ia",
+      "infoPlist": {
+        "NSCameraUsageDescription": "AgroScan IA a besoin de la caméra pour photographier votre sol.",
+        "NSLocationWhenInUseUsageDescription": "AgroScan IA utilise votre position pour analyser les données de sol de votre parcelle.",
+        "NSPhotoLibraryUsageDescription": "AgroScan IA accède à vos photos pour sélectionner une image du sol."
+      }
+    },
+    "android": {
+      "package": "com.agroscan.ia",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "plugins": [
+      "expo-location",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "AgroScan IA a besoin de la caméra pour photographier votre sol."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "AgroScan IA accède à vos photos pour sélectionner une image du sol."
+        }
+      ]
+    ]
+  }
+}
