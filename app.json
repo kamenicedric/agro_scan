@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "sdkVersion": "54.0.0",
     "orientation": "portrait",
+    "icon": "./assets/android-chrome-512x512.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": false,
     "splash": {
@@ -24,6 +25,10 @@
     },
     "android": {
       "package": "com.agroscan.ia",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-chrome-512x512.png",
+        "backgroundColor": "#1a4a2e"
+      },
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.ACCESS_FINE_LOCATION",
