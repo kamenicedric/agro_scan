@@ -52,6 +52,12 @@
         "projectId": "bb1e7857-afc4-4f8f-9469-ea0a6731b612"
       }
     },
-    "owner": "timova"
+    "owner": "timova",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/bb1e7857-afc4-4f8f-9469-ea0a6731b612"
+    }
   }
 }
