@@ -10,8 +10,49 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { signUp } from '../../services/authService';
 import { Colors, Fonts, Radius, Spacing } from '../../theme';
+
+type FieldProps = {
+  label: string;
+  value: string;
+  onChangeText: (value: string) => void;
+  error?: string;
+  placeholder: string;
+  keyboardType?: 'default' | 'email-address';
+  autoCapitalize?: 'none' | 'sentences';
+  secureTextEntry?: boolean;
+};
+
+function FormField({
+  label,
+  value,
+  onChangeText,
+  error,
+  placeholder,
+  keyboardType = 'default',
+  autoCapitalize = 'sentences',
+  secureTextEntry = false,
+}: FieldProps) {
+  return (
+    <View style={styles.fieldWrap}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInput
+        style={[styles.input, error && styles.inputError]}
+        placeholder={placeholder}
+        placeholderTextColor={Colors.textMuted}
+        value={value}
+        onChangeText={onChangeText}
+        keyboardType={keyboardType}
+        autoCapitalize={autoCapitalize}
+        autoCorrect={false}
+        secureTextEntry={secureTextEntry}
+      />
+      {error && <Text style={styles.errorMsg}>{error}</Text>}
+    </View>
+  );
+}
 
 export default function RegisterScreen({ navigation }: any) {
   const [nom, setNom]           = useState('');
@@ -50,30 +91,6 @@ export default function RegisterScreen({ navigation }: any) {
     }
   }
 
-  const Field = ({
-    label, value, onChangeText, error, placeholder, keyboardType = 'default',
-    secureTextEntry = false, autoCapitalize = 'sentences',
-  }: any) => (
-    <View style={styles.fieldWrap}>
-      <Text style={styles.label}>{label}</Text>
-      <TextInput
-        style={[styles.input, error && styles.inputError]}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.textMuted}
-        value={value}
-        onChangeText={(t) => {
-          onChangeText(t);
-          setErrors(p => { const n = { ...p }; delete n[label]; return n; });
-        }}
-        keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
-        autoCorrect={false}
-        secureTextEntry={secureTextEntry}
-      />
-      {error && <Text style={styles.errorMsg}>{error}</Text>}
-    </View>
-  );
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -98,17 +115,23 @@ export default function RegisterScreen({ navigation }: any) {
 
         {/* Form */}
         <View style={styles.form}>
-          <Field
+          <FormField
             label="Nom complet"
             value={nom}
-            onChangeText={setNom}
+            onChangeText={(t) => {
+              setNom(t);
+              setErrors((p) => ({ ...p, nom: undefined }));
+            }}
             error={errors.nom}
             placeholder="Jean Dupont"
           />
-          <Field
+          <FormField
             label="Email"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(t) => {
+              setEmail(t);
+              setErrors((p) => ({ ...p, email: undefined }));
+            }}
             error={errors.email}
             placeholder="votre@email.com"
             keyboardType="email-address"
@@ -131,17 +154,27 @@ export default function RegisterScreen({ navigation }: any) {
               <TouchableOpacity
                 style={styles.eyeBtn}
                 onPress={() => setShowPwd(!showPwd)}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={showPwd ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
               >
-                <Text style={{ fontSize: 16 }}>{showPwd ? '🙈' : '👁'}</Text>
+                <Ionicons
+                  name={showPwd ? 'eye-off-outline' : 'eye-outline'}
+                  size={18}
+                  color={Colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.password && <Text style={styles.errorMsg}>{errors.password}</Text>}
           </View>
 
-          <Field
+          <FormField
             label="Confirmer le mot de passe"
             value={confirm}
-            onChangeText={setConfirm}
+            onChangeText={(t) => {
+              setConfirm(t);
+              setErrors((p) => ({ ...p, confirm: undefined }));
+            }}
             error={errors.confirm}
             placeholder="••••••••"
             secureTextEntry={!showPwd}
@@ -242,6 +275,7 @@ const styles = StyleSheet.create({
   eyeBtn: {
     position: 'absolute', right: 12,
     top: 0, bottom: 0, justifyContent: 'center',
+    paddingHorizontal: 4,
   },
   errorMsg: { fontSize: 11, color: Colors.red, marginTop: 4 },
 

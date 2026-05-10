@@ -10,6 +10,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { signIn } from '../../services/authService';
 import { Colors, Fonts, Radius, Spacing } from '../../theme';
 
@@ -93,8 +94,18 @@ export default function LoginScreen({ navigation }: any) {
                 secureTextEntry={!showPwd}
                 autoCapitalize="none"
               />
-              <TouchableOpacity style={styles.eyeBtn} onPress={() => setShowPwd(!showPwd)}>
-                <Text style={styles.eyeIcon}>{showPwd ? '🙈' : '👁'}</Text>
+              <TouchableOpacity
+                style={styles.eyeBtn}
+                onPress={() => setShowPwd(!showPwd)}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={showPwd ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+              >
+                <Ionicons
+                  name={showPwd ? 'eye-off-outline' : 'eye-outline'}
+                  size={18}
+                  color={Colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
             {errors.password && <Text style={styles.errorMsg}>{errors.password}</Text>}
@@ -188,8 +199,8 @@ const styles = StyleSheet.create({
   eyeBtn: {
     position: 'absolute', right: 12,
     top: 0, bottom: 0, justifyContent: 'center',
+    paddingHorizontal: 4,
   },
-  eyeIcon: { fontSize: 16 },
   errorMsg: { fontSize: 11, color: Colors.red, marginTop: 4 },
 
   forgotWrap: { alignSelf: 'flex-end', marginBottom: Spacing.lg },
