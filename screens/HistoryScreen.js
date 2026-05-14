@@ -5,8 +5,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Switch,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import {
   TopBar,
   Card,
@@ -53,7 +53,7 @@ function YearBlock({ year, label, data, onChange }) {
           onPress={() => setShowCulturePicker(!showCulturePicker)}
         >
           <Text style={styles.selectText}>{data.culture || 'Sélectionner...'}</Text>
-          <Text style={styles.selectArrow}>▾</Text>
+          <Ionicons name="chevron-down" size={16} color={Colors.textMuted} />
         </TouchableOpacity>
         {showCulturePicker && (
           <View style={styles.picker}>
@@ -111,7 +111,7 @@ function YearBlock({ year, label, data, onChange }) {
           onPress={() => setShowMaladiePicker(!showMaladiePicker)}
         >
           <Text style={styles.selectText}>{data.maladie || 'Sélectionner...'}</Text>
-          <Text style={styles.selectArrow}>▾</Text>
+          <Ionicons name="chevron-down" size={16} color={Colors.textMuted} />
         </TouchableOpacity>
         {showMaladiePicker && (
           <View style={styles.picker}>
@@ -171,7 +171,7 @@ export default function HistoryScreen({ navigation, route }) {
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.infoBox}>
-          <Text style={styles.infoIcon}>💡</Text>
+          <Ionicons name="information-circle-outline" size={16} color={Colors.blue} style={{ marginTop: 1 }} />
           <Text style={styles.infoText}>
             Ces informations permettent à l'IA d'affiner ses recommandations
             selon la rotation culturale de votre parcelle.
@@ -189,7 +189,7 @@ export default function HistoryScreen({ navigation, route }) {
         ))}
 
         <PrimaryButton
-          label="Passer à la photo →"
+          label="Passer a la photo"
           onPress={handleContinue}
         />
       </ScrollView>
@@ -206,20 +206,19 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: Colors.blueBg,
     borderRadius: Radius.md,
-    padding: Spacing.sm,
+    padding: Spacing.md,
     marginBottom: Spacing.lg,
     alignItems: 'flex-start',
   },
-  infoIcon: { fontSize: 14 },
-  infoText: { fontSize: 11, color: Colors.blue, flex: 1, lineHeight: 16 },
+  infoText: { fontSize: 12, color: Colors.blue, flex: 1, lineHeight: 18 },
   yearLabel: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: Fonts.semibold,
     color: Colors.primary,
     marginBottom: Spacing.sm,
   },
   selectBox: {
-    height: 38,
+    minHeight: 44,
     borderWidth: 0.5,
     borderColor: Colors.border,
     borderRadius: Radius.sm,
@@ -229,8 +228,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  selectText: { fontSize: 12, color: Colors.textPrimary },
-  selectArrow: { fontSize: 11, color: Colors.textMuted },
+  selectText: { fontSize: 13, color: Colors.textPrimary },
   picker: {
     borderWidth: 0.5,
     borderColor: Colors.border,
@@ -240,19 +238,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   pickerItem: {
-    padding: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: Colors.borderMuted,
   },
   pickerItemActive: { backgroundColor: Colors.accentSoft },
-  pickerText: { fontSize: 12, color: Colors.textSecondary },
+  pickerText: { fontSize: 13, color: Colors.textSecondary },
   pickerTextActive: { color: Colors.primary, fontWeight: Fonts.medium },
   rendementRow: { flexDirection: 'row', gap: 6 },
   rendementBtn: {
     flex: 1,
-    paddingVertical: 8,
+    minHeight: 40,
     borderRadius: Radius.sm,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  rendementText: { fontSize: 10 },
+  rendementText: { fontSize: 12 },
 });

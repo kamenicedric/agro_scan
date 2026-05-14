@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
 import {
   TopBar, Card, SectionTitle, PrimaryButton,
   SecondaryButton, WarningBox,
@@ -149,7 +150,7 @@ export default function CameraScreen({ navigation, route }) {
                 <View style={styles.shutterInner} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.galleryBtn} onPress={pickFromGallery}>
-                <Text style={{ fontSize: 24 }}>📷</Text>
+                <Ionicons name="images-outline" size={24} color={Colors.white} />
               </TouchableOpacity>
             </View>
           </View>
@@ -174,7 +175,7 @@ export default function CameraScreen({ navigation, route }) {
               </View>
             ) : (
               <TouchableOpacity style={styles.placeholder} onPress={openCamera}>
-                <Text style={{ fontSize: 40, marginBottom: 8 }}>📸</Text>
+                <Ionicons name="camera-outline" size={40} color="rgba(255,255,255,0.8)" style={{ marginBottom: 8 }} />
                 <Text style={styles.placeholderText}>Appuyer pour photographier la motte</Text>
               </TouchableOpacity>
             )}
@@ -182,13 +183,13 @@ export default function CameraScreen({ navigation, route }) {
             {warnings.map((w, i) => <WarningBox key={i} message={w} />)}
 
             {photo ? (
-              <SecondaryButton label="📷 Reprendre la photo" onPress={openCamera} />
+              <SecondaryButton label="Reprendre la photo" onPress={openCamera} />
             ) : (
-              <SecondaryButton label="📂 Choisir depuis la galerie" onPress={pickFromGallery} />
+              <SecondaryButton label="Choisir depuis la galerie" onPress={pickFromGallery} />
             )}
 
             <PrimaryButton
-              label="Analyser avec l'IA →"
+              label="Analyser avec l'IA"
               onPress={handleAnalyze}
               loading={validating}
               style={{ marginTop: Spacing.sm }}

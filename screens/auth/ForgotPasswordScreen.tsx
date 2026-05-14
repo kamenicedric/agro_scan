@@ -3,6 +3,7 @@ import {
   View, Text, TextInput, StyleSheet,
   TouchableOpacity, KeyboardAvoidingView, Platform, Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { resetPassword } from '../../services/authService';
 import { Colors, Fonts, Radius, Spacing } from '../../theme';
 
@@ -36,8 +37,11 @@ export default function ForgotPasswordScreen({ navigation }: any) {
       </TouchableOpacity>
 
       <View style={styles.content}>
-        <Text style={styles.icon}>🔑</Text>
+        <View style={styles.iconWrap}>
+          <Ionicons name="lock-closed-outline" size={26} color={Colors.white} />
+        </View>
         <Text style={styles.title}>Mot de passe oublié</Text>
+        <Text style={styles.subtitle}>Récupérez l'accès à votre compte en toute sécurité.</Text>
 
         {sent ? (
           <View style={styles.successBox}>
@@ -91,8 +95,12 @@ const styles = StyleSheet.create({
   backBtn: { marginTop: Spacing.lg, marginBottom: Spacing.xl },
   backArrow: { fontSize: 14, color: Colors.primary },
   content: { flex: 1, alignItems: 'center' },
-  icon: { fontSize: 48, marginBottom: Spacing.md },
-  title: { fontSize: 22, fontWeight: Fonts.bold, color: Colors.primary, marginBottom: Spacing.xl },
+  iconWrap: {
+    width: 60, height: 60, borderRadius: 20, backgroundColor: Colors.primary,
+    alignItems: 'center', justifyContent: 'center', marginBottom: Spacing.md,
+  },
+  title: { fontSize: 22, fontWeight: Fonts.bold, color: Colors.primary },
+  subtitle: { fontSize: 13, color: Colors.textSecondary, marginTop: 6, marginBottom: Spacing.xl, textAlign: 'center' },
   form: { width: '100%', backgroundColor: Colors.white, borderRadius: Radius.xl, padding: Spacing.xl, borderWidth: 0.5, borderColor: Colors.border },
   description: { fontSize: 13, color: Colors.textSecondary, marginBottom: Spacing.lg, lineHeight: 20 },
   label: { fontSize: 12, fontWeight: Fonts.medium, color: Colors.textSecondary, marginBottom: 6 },
@@ -100,7 +108,7 @@ const styles = StyleSheet.create({
   btnPrimary: { backgroundColor: Colors.primary, borderRadius: Radius.md, paddingVertical: 14, alignItems: 'center' },
   btnPrimaryText: { color: Colors.white, fontSize: 15, fontWeight: Fonts.semibold },
   successBox: { width: '100%', backgroundColor: Colors.white, borderRadius: Radius.xl, padding: Spacing.xl, borderWidth: 0.5, borderColor: Colors.border, alignItems: 'center' },
-  successIcon: { fontSize: 40, marginBottom: Spacing.md },
+  successIcon: { fontSize: 34, marginBottom: Spacing.md },
   successTitle: { fontSize: 18, fontWeight: Fonts.semibold, color: Colors.primary, marginBottom: Spacing.sm },
   successText: { fontSize: 13, color: Colors.textSecondary, textAlign: 'center', lineHeight: 20, marginBottom: Spacing.xl },
 });

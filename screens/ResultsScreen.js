@@ -8,6 +8,7 @@ import {
   Share,
   Alert,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import {
   TopBar,
   Card,
@@ -26,21 +27,21 @@ function getRecommendations(texture, ph, historique = []) {
   let cultures = [];
   if (argile > 35) {
     cultures = [
-      { emoji: '🌽', name: 'Maïs', score: 95 },
-      { emoji: '🍠', name: 'Igname', score: 88 },
-      { emoji: '🫘', name: 'Soja', score: 82 },
+      { name: 'Maïs', score: 95 },
+      { name: 'Igname', score: 88 },
+      { name: 'Soja', score: 82 },
     ];
   } else if (limon > 30) {
     cultures = [
-      { emoji: '🌾', name: 'Sorgho', score: 91 },
-      { emoji: '🥜', name: 'Arachide', score: 85 },
-      { emoji: '🌽', name: 'Maïs', score: 80 },
+      { name: 'Sorgho', score: 91 },
+      { name: 'Arachide', score: 85 },
+      { name: 'Maïs', score: 80 },
     ];
   } else {
     cultures = [
-      { emoji: '🥜', name: 'Arachide', score: 90 },
-      { emoji: '🌾', name: 'Mil', score: 85 },
-      { emoji: '🫘', name: 'Niébé', score: 78 },
+      { name: 'Arachide', score: 90 },
+      { name: 'Mil', score: 85 },
+      { name: 'Niébé', score: 78 },
     ];
   }
 
@@ -84,7 +85,7 @@ function NPKCard({ element, value, unit, color, textColor, description }) {
 }
 
 // ─── Crop Tag ─────────────────────────────────────────────────────────────────
-function CropTag({ emoji, name, score, delay }) {
+function CropTag({ name, score, delay }) {
   const slide = useRef(new Animated.Value(20)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -97,10 +98,12 @@ function CropTag({ emoji, name, score, delay }) {
 
   return (
     <Animated.View style={[styles.cropTag, { transform: [{ translateY: slide }], opacity }]}>
-      <Text style={styles.cropEmoji}>{emoji}</Text>
+      <View style={styles.cropIcon}>
+        <Ionicons name="leaf-outline" size={16} color={Colors.white} />
+      </View>
       <View>
         <Text style={styles.cropName}>{name}</Text>
-        <Text style={styles.cropScore}>Score: {score}%</Text>
+        <Text style={styles.cropScore}>Compatibilité: {score}%</Text>
       </View>
     </Animated.View>
   );
@@ -120,20 +123,20 @@ export default function ResultsScreen({ navigation, route }) {
       await Share.share({
         title: 'Rapport AgroScan IA',
         message: `
-🌱 AgroScan IA — Rapport de diagnostic sol
+AgroScan IA - Rapport de diagnostic sol
 
-📍 Localisation: ${route.params?.location?.latitude?.toFixed(4) || 'N/A'}° N
+Localisation: ${route.params?.location?.latitude?.toFixed(4) || 'N/A'}° N
 
-🧱 Texture: ${result?.classification || 'Argile-limoneux'}
+Texture: ${result?.classification || 'Argile-limoneux'}
   • Argile: ${result?.texture?.argile}%
   • Limon: ${result?.texture?.limon}%
   • Sable: ${result?.texture?.sable}%
   • pH: ${result?.ph}
 
-🌿 Cultures recommandées:
-${cultures.map((c) => `  ${c.emoji} ${c.name} (${c.score}%)`).join('\n')}
+Cultures recommandées:
+${cultures.map((c) => `  - ${c.name} (${c.score}%)`).join('\n')}
 
-💊 Plan de fertilisation N-P-K:
+Plan de fertilisation N-P-K:
   • Azote (N): ${npk.N} kg/ha
   • Phosphore (P): ${npk.P} kg/ha
   • Potassium (K): ${npk.K} kg/ha
@@ -150,7 +153,7 @@ Généré par AgroScan IA
     <View style={styles.container}>
       <TopBar
         title="Résultats"
-        icon="✅"
+        icon="ion:checkmark-done-outline"
         badge="Diagnostic complet"
       />
 
@@ -161,7 +164,7 @@ Généré par AgroScan IA
       >
         {/* Recommended Crops */}
         <View style={styles.resultHeader}>
-          <Text style={styles.resultHeaderTitle}>🌿 Cultures recommandées</Text>
+          <Text style={styles.resultHeaderTitle}>Cultures recommandées</Text>
           <Text style={styles.resultHeaderSub}>
             Basé sur sol {result?.classification || 'argilo-limoneux'} · Climat tropical humide
           </Text>
@@ -176,7 +179,7 @@ Généré par AgroScan IA
         {rotationAlert && (
           <Card style={styles.alertCard}>
             <View style={styles.alertRow}>
-              <Text style={styles.alertIcon}>🔄</Text>
+              <Ionicons name="sync-outline" size={18} color="#5d4037" />
               <View>
                 <Text style={styles.alertTitle}>Alerte rotation culturale</Text>
                 <Text style={styles.alertText}>
@@ -257,12 +260,12 @@ Généré par AgroScan IA
         </Card>
 
         <PrimaryButton
-          label="📄 Partager le rapport"
+          label="Partager le rapport"
           onPress={shareReport}
           style={{ marginBottom: Spacing.sm }}
         />
         <SecondaryButton
-          label="+ Nouveau diagnostic"
+          label="Nouveau diagnostic"
           onPress={() => navigation.navigate('Geolocation')}
         />
       </ScrollView>
@@ -297,7 +300,7 @@ const styles = StyleSheet.create({
   },
   resultHeaderSub: {
     color: Colors.textOnDarkMuted,
-    fontSize: 10,
+    fontSize: 11,
     marginBottom: Spacing.sm,
   },
   cropsContainer: { gap: 6 },
@@ -309,9 +312,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-  cropEmoji: { fontSize: 22 },
+  cropIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   cropName: { color: Colors.white, fontSize: 13, fontWeight: Fonts.medium },
-  cropScore: { color: Colors.textOnDarkMuted, fontSize: 10 },
+  cropScore: { color: Colors.textOnDarkMuted, fontSize: 11 },
 
   alertCard: {
     borderColor: '#ffe082',
@@ -319,9 +329,8 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   alertRow: { flexDirection: 'row', gap: 8, alignItems: 'flex-start' },
-  alertIcon: { fontSize: 18 },
-  alertTitle: { fontSize: 11, fontWeight: Fonts.semibold, color: '#5d4037', marginBottom: 3 },
-  alertText: { fontSize: 11, color: '#5d4037', lineHeight: 16 },
+  alertTitle: { fontSize: 12, fontWeight: Fonts.semibold, color: '#5d4037', marginBottom: 3 },
+  alertText: { fontSize: 12, color: '#5d4037', lineHeight: 18 },
 
   npkRow: { flexDirection: 'row', gap: 8, marginBottom: Spacing.md },
   npkCard: {
@@ -331,25 +340,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   npkValue: { fontSize: 22, fontWeight: Fonts.bold },
-  npkElement: { fontSize: 9, fontWeight: Fonts.semibold, marginTop: 2, textAlign: 'center' },
-  npkDesc: { fontSize: 8, textAlign: 'center', marginTop: 2 },
-  npkUnit: { fontSize: 8, marginTop: 3 },
+  npkElement: { fontSize: 10, fontWeight: Fonts.semibold, marginTop: 2, textAlign: 'center' },
+  npkDesc: { fontSize: 9, textAlign: 'center', marginTop: 2 },
+  npkUnit: { fontSize: 9, marginTop: 3 },
 
   planRow: { paddingVertical: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   planRowBorder: { borderBottomWidth: 0.5, borderBottomColor: Colors.borderMuted },
   planLeft: { flex: 1, paddingRight: 10 },
-  planPhase: { fontSize: 11, fontWeight: Fonts.medium, color: Colors.textPrimary, marginBottom: 2 },
-  planAction: { fontSize: 10, color: Colors.textSecondary },
+  planPhase: { fontSize: 12, fontWeight: Fonts.medium, color: Colors.textPrimary, marginBottom: 2 },
+  planAction: { fontSize: 11, color: Colors.textSecondary },
   planTimingBadge: {
     backgroundColor: Colors.accentSoft,
     borderRadius: Radius.full,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  planTiming: { fontSize: 10, color: Colors.primary, fontWeight: Fonts.medium },
+  planTiming: { fontSize: 11, color: Colors.primary, fontWeight: Fonts.medium },
 
   summaryCard: { marginBottom: Spacing.md },
-  summaryTitle: { fontSize: 11, fontWeight: Fonts.semibold, color: Colors.primary, marginBottom: Spacing.sm },
+  summaryTitle: { fontSize: 12, fontWeight: Fonts.semibold, color: Colors.primary, marginBottom: Spacing.sm },
   summaryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   summaryStat: {
     width: '47%',
@@ -357,6 +366,6 @@ const styles = StyleSheet.create({
     borderRadius: Radius.sm,
     padding: 8,
   },
-  summaryStatLabel: { fontSize: 9, color: Colors.textMuted, marginBottom: 2 },
+  summaryStatLabel: { fontSize: 10, color: Colors.textMuted, marginBottom: 2 },
   summaryStatValue: { fontSize: 12, fontWeight: Fonts.medium, color: Colors.primary },
 });

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, Animated, ActivityIndicator, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { TopBar, Card, SectionTitle, Pill, PrimaryButton } from '../components/SharedComponents';
 import { Colors, Spacing, Radius, Fonts } from '../theme';
 import { useAuth } from '../context/AuthContext';
@@ -25,7 +26,13 @@ function StepRow({ label, done, active }: any) {
   },[active,done]);
   return (
     <Animated.View style={[s.stepRow,{opacity}]}>
-      <Text style={s.stepIcon}>{done?'✅':active?'⏳':'○'}</Text>
+      <View style={s.stepIconWrap}>
+        <Ionicons
+          name={done ? 'checkmark-circle' : active ? 'sync-outline' : 'ellipse-outline'}
+          size={16}
+          color={done ? Colors.primary : active ? Colors.amber : Colors.textMuted}
+        />
+      </View>
       <Text style={[s.stepLabel,done&&{color:Colors.primary}]}>{label}</Text>
     </Animated.View>
   );
@@ -62,8 +69,8 @@ export default function AnalysisScreen({ navigation, route }: any) {
   const isLoading = !result && !error;
   return (
     <View style={s.container}>
-      <TopBar title="Analyse IA" icon="🧠"
-        badge={isLoading?'En cours...':error?'Erreur':'Terminé ✓'}
+      <TopBar title="Analyse IA" icon="ion:analytics-outline"
+        badge={isLoading ? 'En cours...' : error ? 'Erreur' : 'Terminé'}
         badgeColor={isLoading?Colors.amber:error?Colors.red:undefined}
         showBack={!!error} onBack={()=>navigation.goBack()} />
       <ScrollView style={s.scroll} contentContainerStyle={s.sc} showsVerticalScrollIndicator={false}>
@@ -72,14 +79,16 @@ export default function AnalysisScreen({ navigation, route }: any) {
           <Card style={{marginBottom:Spacing.md}}>
             <View style={s.loadingHeader}><ActivityIndicator color={Colors.primary} size="small"/><Text style={s.loadingTitle}>Pipeline IA...</Text></View>
             {STEPS.map((st,i)=><StepRow key={st} label={st} done={i<currentStep} active={i===currentStep}/>)}
-            <View style={{marginTop:8,backgroundColor:Colors.accentSoft,borderRadius:Radius.sm,padding:8}}><Text style={{fontSize:10,color:Colors.primary,textAlign:'center'}}>🧠 MobileNetV2 → 🌍 SoilGrids → 🎨 Couleur</Text></View>
+            <View style={{marginTop:8,backgroundColor:Colors.accentSoft,borderRadius:Radius.sm,padding:8}}>
+              <Text style={{fontSize:11,color:Colors.primary,textAlign:'center'}}>MobileNetV2 -> SoilGrids -> Couleur</Text>
+            </View>
           </Card>
         )}
-        {error && (<Card style={s.errCard}><Text style={s.errText}>❌ {error}</Text><PrimaryButton label="Réessayer" onPress={runAnalysis} style={{marginTop:12}}/></Card>)}
+        {error && (<Card style={s.errCard}><Text style={s.errText}>{error}</Text><PrimaryButton label="Réessayer" onPress={runAnalysis} style={{marginTop:12}}/></Card>)}
         {result && (
           <>
             <View style={{flexDirection:'row',alignItems:'center',gap:8,marginBottom:Spacing.md}}>
-              <Pill label={method==='mobilenet'?'🧠 MobileNetV2':method==='soilgrids'?'🌍 SoilGrids':'🎨 Couleur'} color={method==='mobilenet'?'green':method==='soilgrids'?'blue':'amber'}/>
+              <Pill label={method==='mobilenet'?'MobileNetV2':method==='soilgrids'?'SoilGrids':'Couleur'} color={method==='mobilenet'?'green':method==='soilgrids'?'blue':'amber'}/>
               {result.confidence&&<Text style={{fontSize:11,color:Colors.textMuted}}>Confiance: {Math.round(result.confidence*100)}%</Text>}
             </View>
             <SectionTitle>Classification texture</SectionTitle>
@@ -96,17 +105,17 @@ export default function AnalysisScreen({ navigation, route }: any) {
               <View style={s.phRow}>
                 <Text style={s.phLabel}>pH</Text>
                 <View style={s.phBadge}><Text style={s.phValue}>{result.texture?.ph}</Text></View>
-                <Text style={{fontSize:11,color:Colors.accent}}>{result.texture?.ph>=6&&result.texture?.ph<=7?'✓ Optimal':'⚠ À corriger'}</Text>
+                <Text style={{fontSize:11,color:Colors.accent}}>{result.texture?.ph>=6&&result.texture?.ph<=7?'Optimal':'À corriger'}</Text>
               </View>
             </Card>
             <SectionTitle>Données croisées</SectionTitle>
             <Card style={{marginBottom:Spacing.md}}>
               <View style={{flexDirection:'row',flexWrap:'wrap',gap:6,marginBottom:8}}>
-                <Pill label="✓ OpenMeteo" color="green"/><Pill label="✓ SoilGrids" color="blue"/>
+                <Pill label="OpenMeteo" color="green"/><Pill label="SoilGrids" color="blue"/>
               </View>
               <Text style={{fontSize:10,color:Colors.textMuted}}>{result.meteo?.pluvio_mm_an}mm/an · {result.meteo?.temp_moy_c}°C · {result.zoneClimatique}</Text>
             </Card>
-            <PrimaryButton label="Voir les recommandations →" onPress={()=>navigation.navigate('Results',{...route.params,result})}/>
+            <PrimaryButton label="Voir les recommandations" onPress={()=>navigation.navigate('Results',{...route.params,result})}/>
           </>
         )}
       </ScrollView>
@@ -121,10 +130,10 @@ const s = StyleSheet.create({
   thumbOverlay:{...StyleSheet.absoluteFillObject,backgroundColor:'rgba(0,0,0,0.3)',justifyContent:'flex-end',padding:10},
   thumbLabel:{color:Colors.white,fontSize:11,fontWeight:Fonts.medium},
   loadingHeader:{flexDirection:'row',alignItems:'center',gap:10,marginBottom:Spacing.md},
-  loadingTitle:{fontSize:13,fontWeight:Fonts.medium,color:Colors.primary},
+  loadingTitle:{fontSize:14,fontWeight:Fonts.semibold,color:Colors.primary},
   stepRow:{flexDirection:'row',alignItems:'center',gap:8,marginBottom:8},
-  stepIcon:{fontSize:14,width:22}, stepLabel:{fontSize:12,color:Colors.textSecondary},
-  errCard:{backgroundColor:Colors.redBg,borderColor:Colors.red}, errText:{fontSize:13,color:Colors.red},
+  stepIconWrap:{width:22,alignItems:'center'}, stepLabel:{fontSize:13,color:Colors.textSecondary},
+  errCard:{backgroundColor:Colors.redBg,borderColor:Colors.red}, errText:{fontSize:13,color:Colors.red,lineHeight:18},
   barWrap:{marginBottom:Spacing.sm}, barLabelRow:{flexDirection:'row',justifyContent:'space-between',marginBottom:4},
   barLabel:{fontSize:11,color:Colors.textSecondary}, barValue:{fontSize:11,fontWeight:Fonts.medium},
   barTrack:{height:8,backgroundColor:'#e0e0e0',borderRadius:4,overflow:'hidden'}, barFill:{height:'100%',borderRadius:4},

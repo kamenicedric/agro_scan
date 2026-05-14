@@ -84,7 +84,7 @@ export default function RegisterScreen({ navigation }: any) {
       Alert.alert('Inscription échouée', error);
     } else {
       Alert.alert(
-        'Compte créé ! 🌱',
+        'Compte créé',
         'Un email de confirmation vous a été envoyé. Vérifiez votre boîte mail puis connectez-vous.',
         [{ text: 'Se connecter', onPress: () => navigation.navigate('Login') }]
       );
@@ -107,10 +107,10 @@ export default function RegisterScreen({ navigation }: any) {
             <Text style={styles.backArrow}>←</Text>
           </TouchableOpacity>
           <View style={styles.logoCircle}>
-            <Text style={{ fontSize: 28 }}>🌱</Text>
+            <Ionicons name="leaf-outline" size={26} color={Colors.white} />
           </View>
           <Text style={styles.title}>Créer un compte</Text>
-          <Text style={styles.subtitle}>Rejoignez AgroScan IA gratuitement</Text>
+          <Text style={styles.subtitle}>Commencez vos diagnostics en moins de 2 minutes</Text>
         </View>
 
         {/* Form */}
@@ -214,9 +214,7 @@ export default function RegisterScreen({ navigation }: any) {
             disabled={loading}
             activeOpacity={0.85}
           >
-            <Text style={styles.btnPrimaryText}>
-              {loading ? 'Création du compte...' : "S'inscrire →"}
-            </Text>
+            <Text style={styles.btnPrimaryText}>{loading ? 'Création du compte...' : "Créer mon compte"}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -224,7 +222,7 @@ export default function RegisterScreen({ navigation }: any) {
             onPress={() => navigation.navigate('Login')}
           >
             <Text style={styles.loginLinkText}>
-              Déjà un compte ?{' '}
+              Vous avez déjà un compte ?{' '}
               <Text style={{ color: Colors.primary, fontWeight: Fonts.semibold }}>
                 Se connecter
               </Text>
@@ -245,7 +243,7 @@ const styles = StyleSheet.create({
   logoCircle: {
     width: 64, height: 64,
     backgroundColor: Colors.primary,
-    borderRadius: 18,
+    borderRadius: 22,
     alignItems: 'center', justifyContent: 'center',
     marginBottom: Spacing.sm,
   },

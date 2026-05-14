@@ -2,10 +2,11 @@ import React from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
+  Pressable,
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors, Fonts, Radius, Spacing } from '../theme';
 
 // ─── Top Bar ─────────────────────────────────────────────────────────────────
@@ -14,13 +15,17 @@ export function TopBar({ title, icon, showBack, onBack, badge, badgeColor }) {
     <View style={styles.topBar}>
       <View style={styles.topBarLeft}>
         {showBack && (
-          <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+          <Pressable onPress={onBack} style={({ pressed }) => [styles.backBtn, pressed && styles.pressedDim]}>
             <Text style={styles.backArrow}>←</Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
         {icon && (
           <View style={styles.topBarIcon}>
-            <Text style={{ fontSize: 13 }}>{icon}</Text>
+            {typeof icon === 'string' && icon.includes('ion:') ? (
+              <Ionicons name={icon.replace('ion:', '')} size={14} color={Colors.white} />
+            ) : (
+              <Text style={{ fontSize: 13 }}>{icon}</Text>
+            )}
           </View>
         )}
         <Text style={styles.topBarTitle}>{title}</Text>
@@ -65,22 +70,26 @@ export function Pill({ label, color = 'green' }) {
 // ─── Primary Button ───────────────────────────────────────────────────────────
 export function PrimaryButton({ label, onPress, loading, style }) {
   return (
-    <TouchableOpacity style={[styles.primaryBtn, style]} onPress={onPress} activeOpacity={0.85}>
+    <Pressable
+      style={({ pressed }) => [styles.primaryBtn, style, pressed && styles.pressedScale, loading && styles.disabledState]}
+      onPress={onPress}
+      disabled={loading}
+    >
       {loading ? (
         <ActivityIndicator color={Colors.white} size="small" />
       ) : (
         <Text style={styles.primaryBtnText}>{label}</Text>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
 // ─── Secondary Button ─────────────────────────────────────────────────────────
 export function SecondaryButton({ label, onPress, style }) {
   return (
-    <TouchableOpacity style={[styles.secondaryBtn, style]} onPress={onPress} activeOpacity={0.8}>
+    <Pressable style={({ pressed }) => [styles.secondaryBtn, style, pressed && styles.pressedDim]} onPress={onPress}>
       <Text style={styles.secondaryBtnText}>{label}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -97,27 +106,28 @@ export function FormField({ label, children, style }) {
 // ─── Bottom Tab Bar ───────────────────────────────────────────────────────────
 export function TabBar({ activeTab, onTabPress }) {
   const tabs = [
-    { key: 'map', icon: '📍', label: 'Carte' },
-    { key: 'history', icon: '📋', label: 'Historique' },
-    { key: 'scan', icon: '🔬', label: 'Scan' },
-    { key: 'profile', icon: '👤', label: 'Profil' },
+    { key: 'map', icon: 'navigate-outline', iconActive: 'navigate', label: 'Carte' },
+    { key: 'history', icon: 'time-outline', iconActive: 'time', label: 'Historique' },
+    { key: 'scan', icon: 'camera-outline', iconActive: 'camera', label: 'Scan' },
+    { key: 'profile', icon: 'person-outline', iconActive: 'person', label: 'Profil' },
   ];
   return (
     <View style={styles.tabBar}>
       {tabs.map((t) => (
-        <TouchableOpacity
+        <Pressable
           key={t.key}
-          style={styles.tabItem}
+          style={({ pressed }) => [styles.tabItem, pressed && styles.tabPressed]}
           onPress={() => onTabPress?.(t.key)}
-          activeOpacity={0.7}
         >
-          <Text style={[styles.tabIcon, activeTab === t.key && styles.tabIconActive]}>
-            {t.icon}
-          </Text>
+          <Ionicons
+            name={activeTab === t.key ? t.iconActive : t.icon}
+            size={17}
+            color={activeTab === t.key ? Colors.primary : Colors.textMuted}
+          />
           <Text style={[styles.tabLabel, activeTab === t.key && styles.tabLabelActive]}>
             {t.label}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );
@@ -138,7 +148,7 @@ const styles = StyleSheet.create({
   topBar: {
     backgroundColor: Colors.primary,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: 12,
+    paddingVertical: 13,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -148,11 +158,11 @@ const styles = StyleSheet.create({
   backArrow: { color: Colors.white, fontSize: 20 },
   topBarIcon: {
     width: 26, height: 26,
-    backgroundColor: Colors.accent,
-    borderRadius: 7,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderRadius: 8,
     alignItems: 'center', justifyContent: 'center',
   },
-  topBarTitle: { color: Colors.white, fontSize: 14, fontWeight: Fonts.medium },
+  topBarTitle: { color: Colors.white, fontSize: 15, fontWeight: Fonts.semibold, letterSpacing: 0.2 },
   badge: {
     paddingHorizontal: 10, paddingVertical: 3,
     borderRadius: Radius.full,
@@ -163,11 +173,11 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     borderWidth: 0.5,
     borderColor: Colors.border,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: Fonts.semibold,
     color: Colors.primary,
     textTransform: 'uppercase',
@@ -183,33 +193,40 @@ const styles = StyleSheet.create({
   primaryBtn: {
     backgroundColor: Colors.primary,
     borderRadius: Radius.md,
-    paddingVertical: 13,
+    minHeight: 48,
+    paddingHorizontal: Spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: Spacing.xs,
   },
-  primaryBtnText: { color: Colors.white, fontSize: 13, fontWeight: Fonts.medium },
+  primaryBtnText: { color: Colors.white, fontSize: 14, fontWeight: Fonts.semibold },
   secondaryBtn: {
     borderWidth: 1,
     borderColor: Colors.primary,
     borderRadius: Radius.md,
-    paddingVertical: 10,
+    minHeight: 44,
+    paddingHorizontal: Spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.sm,
   },
-  secondaryBtnText: { color: Colors.primary, fontSize: 11 },
-  formLabel: { fontSize: 10, color: Colors.textMuted, marginBottom: 4 },
+  secondaryBtnText: { color: Colors.primary, fontSize: 13, fontWeight: Fonts.medium },
+  formLabel: { fontSize: 12, color: Colors.textSecondary, marginBottom: 6 },
   tabBar: {
     flexDirection: 'row',
-    borderTopWidth: 0.5,
+    borderTopWidth: 1,
     borderTopColor: Colors.border,
     backgroundColor: Colors.white,
-    paddingBottom: 4,
+    paddingBottom: 6,
+    paddingTop: 2,
   },
-  tabItem: { flex: 1, alignItems: 'center', paddingVertical: 8 },
-  tabIcon: { fontSize: 16, marginBottom: 2 },
-  tabIconActive: {},
-  tabLabel: { fontSize: 9, color: Colors.textMuted },
+  tabItem: { flex: 1, alignItems: 'center', paddingVertical: 7 },
+  tabPressed: { opacity: 0.7 },
+  tabLabel: { fontSize: 10, color: Colors.textMuted },
   tabLabelActive: { color: Colors.primary, fontWeight: Fonts.medium },
+  pressedDim: { opacity: 0.85 },
+  pressedScale: { transform: [{ scale: 0.99 }] },
+  disabledState: { opacity: 0.7 },
   warningBox: {
     backgroundColor: Colors.amberBg,
     borderWidth: 0.5,

@@ -95,6 +95,7 @@ export async function getAccessToken(): Promise<string | null> {
 
 // ─── Traduction des erreurs Supabase → français ───────────────────────────────
 function translateAuthError(msg: string): string {
+  const lowerMsg = msg.toLowerCase();
   const map: Record<string, string> = {
     'Invalid login credentials':          'Email ou mot de passe incorrect.',
     'Email not confirmed':                 'Veuillez confirmer votre email avant de vous connecter.',
@@ -103,9 +104,13 @@ function translateAuthError(msg: string): string {
     'Unable to validate email address':   'Adresse email invalide.',
     'Email rate limit exceeded':          'Trop de tentatives. Réessayez dans quelques minutes.',
     'For security purposes':              'Trop de tentatives. Patientez avant de réessayer.',
+    'Database error saving new user':     "Le compte n'a pas pu être créé à cause d'un problème de base de données (profil utilisateur). Réessaie avec un autre email ou contacte l'administrateur.",
   };
   for (const [key, val] of Object.entries(map)) {
-    if (msg.includes(key)) return val;
+    if (msg.includes(key) || lowerMsg.includes(key.toLowerCase())) return val;
+  }
+  if (lowerMsg.includes('email address') && lowerMsg.includes('is invalid')) {
+    return 'Adresse email invalide.';
   }
   return msg;
 }

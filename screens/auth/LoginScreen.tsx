@@ -55,15 +55,18 @@ export default function LoginScreen({ navigation }: any) {
         {/* Logo */}
         <View style={styles.logoWrap}>
           <View style={styles.logoCircle}>
-            <Text style={styles.logoEmoji}>🌱</Text>
+            <Ionicons name="leaf-outline" size={28} color={Colors.white} />
           </View>
           <Text style={styles.appName}>AgroScan IA</Text>
-          <Text style={styles.tagline}>Diagnostic intelligent du sol</Text>
+          <Text style={styles.tagline}>Diagnostic intelligent des sols agricoles</Text>
         </View>
 
         {/* Form */}
         <View style={styles.form}>
-          <Text style={styles.formTitle}>Connexion</Text>
+          <Text style={styles.formTitle}>Se connecter</Text>
+          <Text style={styles.formSubtitle}>
+            Accédez à vos diagnostics et suivez l'évolution de vos parcelles.
+          </Text>
 
           {/* Email */}
           <View style={styles.fieldWrap}>
@@ -127,7 +130,7 @@ export default function LoginScreen({ navigation }: any) {
             activeOpacity={0.85}
           >
             <Text style={styles.btnPrimaryText}>
-              {loading ? 'Connexion...' : 'Se connecter'}
+              {loading ? 'Connexion en cours...' : 'Se connecter'}
             </Text>
           </TouchableOpacity>
 
@@ -144,7 +147,7 @@ export default function LoginScreen({ navigation }: any) {
             onPress={() => navigation.navigate('Register')}
             activeOpacity={0.8}
           >
-            <Text style={styles.btnSecondaryText}>Créer un compte</Text>
+            <Text style={styles.btnSecondaryText}>Créer un compte gratuitement</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -164,11 +167,10 @@ const styles = StyleSheet.create({
   logoCircle: {
     width: 72, height: 72,
     backgroundColor: Colors.primary,
-    borderRadius: 20,
+    borderRadius: 24,
     alignItems: 'center', justifyContent: 'center',
     marginBottom: Spacing.md,
   },
-  logoEmoji: { fontSize: 36 },
   appName: { fontSize: 26, fontWeight: Fonts.bold, color: Colors.primary, letterSpacing: 0.5 },
   tagline: { fontSize: 13, color: Colors.textMuted, marginTop: 4 },
 
@@ -179,7 +181,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: Colors.border,
   },
-  formTitle: { fontSize: 20, fontWeight: Fonts.semibold, color: Colors.textPrimary, marginBottom: Spacing.lg },
+  formTitle: { fontSize: 22, fontWeight: Fonts.semibold, color: Colors.textPrimary },
+  formSubtitle: { fontSize: 13, color: Colors.textSecondary, marginTop: 6, marginBottom: Spacing.lg, lineHeight: 18 },
 
   fieldWrap: { marginBottom: Spacing.md },
   label: { fontSize: 12, fontWeight: Fonts.medium, color: Colors.textSecondary, marginBottom: 6 },

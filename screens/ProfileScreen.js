@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Switch,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import {
   TopBar,
   Card,
@@ -66,11 +67,9 @@ function HistoryItem({ item, onPress }) {
           <Pill label={item.status} color={item.statusColor} />
         </View>
         <View style={styles.historyMeta}>
-          <Text style={styles.historyMetaText}>🧱 {item.texture}</Text>
-          <Text style={styles.historyMetaText}>📍 {item.coords}</Text>
-          <Text style={styles.historyMetaText}>
-            🌿 {item.cultures.join(', ')}
-          </Text>
+          <Text style={styles.historyMetaText}>Texture: {item.texture}</Text>
+          <Text style={styles.historyMetaText}>Zone: {item.coords}</Text>
+          <Text style={styles.historyMetaText}>Cultures: {item.cultures.join(', ')}</Text>
         </View>
       </Card>
     </TouchableOpacity>
@@ -80,7 +79,7 @@ function HistoryItem({ item, onPress }) {
 function StatCard({ icon, value, label }) {
   return (
     <View style={styles.statCard}>
-      <Text style={styles.statIcon}>{icon}</Text>
+      <Ionicons name={icon} size={16} color={Colors.primary} style={styles.statIcon} />
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
@@ -97,15 +96,15 @@ export default function ProfileScreen({ navigation }) {
   }
 
   const stats = [
-    { icon: '🔬', value: MOCK_HISTORY.length.toString(), label: 'Diagnostics' },
-    { icon: '🌿', value: '4', label: 'Parcelles' },
-    { icon: '📅', value: '3 mois', label: "Depuis" },
-    { icon: '✅', value: '2', label: 'Fertiles' },
+    { icon: 'analytics-outline', value: MOCK_HISTORY.length.toString(), label: 'Diagnostics' },
+    { icon: 'map-outline', value: '4', label: 'Parcelles' },
+    { icon: 'calendar-outline', value: '3 mois', label: 'Ancienneté' },
+    { icon: 'checkmark-circle-outline', value: '2', label: 'Fertiles' },
   ];
 
   return (
     <View style={styles.container}>
-      <TopBar title="Mon profil" icon="👤" />
+      <TopBar title="Mon profil" icon="ion:person-outline" />
 
       <ScrollView
         style={styles.scroll}
@@ -148,7 +147,7 @@ export default function ProfileScreen({ navigation }) {
         {selectedItem && (
           <Card style={styles.detailCard}>
             <View style={styles.detailHeader}>
-              <Text style={styles.detailTitle}>📋 {selectedItem.name}</Text>
+              <Text style={styles.detailTitle}>{selectedItem.name}</Text>
               <TouchableOpacity onPress={() => setSelectedItem(null)}>
                 <Text style={styles.detailClose}>✕</Text>
               </TouchableOpacity>
@@ -204,7 +203,7 @@ export default function ProfileScreen({ navigation }) {
         </Card>
 
         <PrimaryButton
-          label="+ Nouveau diagnostic"
+          label="Nouveau diagnostic"
           onPress={() => navigation.navigate('Geolocation')}
           style={{ marginTop: Spacing.sm }}
         />
@@ -236,7 +235,7 @@ const styles = StyleSheet.create({
   },
   avatarText: { color: Colors.white, fontSize: 16, fontWeight: Fonts.semibold },
   profileName: { fontSize: 15, fontWeight: Fonts.semibold, color: Colors.textPrimary },
-  profileSub: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  profileSub: { fontSize: 12, color: Colors.textMuted, marginTop: 2 },
   profileTagRow: { marginTop: 6 },
 
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: Spacing.md },
@@ -251,7 +250,7 @@ const styles = StyleSheet.create({
   },
   statIcon: { fontSize: 16, marginBottom: 4 },
   statValue: { fontSize: 16, fontWeight: Fonts.semibold, color: Colors.primary },
-  statLabel: { fontSize: 9, color: Colors.textMuted, textAlign: 'center' },
+  statLabel: { fontSize: 10, color: Colors.textMuted, textAlign: 'center' },
 
   historyCard: { marginBottom: 8 },
   historyHeader: {
@@ -260,10 +259,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginBottom: 8,
   },
-  historyName: { fontSize: 12, fontWeight: Fonts.medium, color: Colors.textPrimary },
-  historyDate: { fontSize: 10, color: Colors.textMuted, marginTop: 2 },
+  historyName: { fontSize: 13, fontWeight: Fonts.medium, color: Colors.textPrimary },
+  historyDate: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
   historyMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  historyMetaText: { fontSize: 10, color: Colors.textSecondary },
+  historyMetaText: { fontSize: 11, color: Colors.textSecondary },
 
   detailCard: {
     borderColor: Colors.primary,
@@ -278,10 +277,10 @@ const styles = StyleSheet.create({
   detailClose: { fontSize: 16, color: Colors.textMuted },
   detailBody: { gap: 8 },
   detailRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  detailKey: { fontSize: 11, color: Colors.textSecondary },
-  detailVal: { fontSize: 11, fontWeight: Fonts.medium, color: Colors.textPrimary },
+  detailKey: { fontSize: 12, color: Colors.textSecondary },
+  detailVal: { fontSize: 12, fontWeight: Fonts.medium, color: Colors.textPrimary },
 
   settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   settingLabel: { fontSize: 13, fontWeight: Fonts.medium, color: Colors.textPrimary },
-  settingDesc: { fontSize: 10, color: Colors.textMuted, marginTop: 2 },
+  settingDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
 });

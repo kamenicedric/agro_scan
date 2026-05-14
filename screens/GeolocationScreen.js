@@ -57,7 +57,7 @@ export default function GeolocationScreen({ navigation }) {
     <View style={styles.container}>
       <TopBar
         title="AgroScan IA"
-        icon="🌱"
+        icon="ion:leaf-outline"
         badge={location ? 'GPS actif' : 'GPS...'}
       />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.sc} showsVerticalScrollIndicator={false}>
@@ -87,9 +87,9 @@ export default function GeolocationScreen({ navigation }) {
         <Card>
           <Text style={{ fontSize: 10, color: Colors.textMuted, marginBottom: 6 }}>Données de zone récupérées</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-            <Pill label={`🌧 ${zoneData.pluvio}`} color="blue" />
-            <Pill label={`🌡 ${zoneData.temp}`}   color="amber" />
-            <Pill label={`🌿 ${zoneData.zone}`}   color="green" />
+            <Pill label={`Pluviometrie: ${zoneData.pluvio}`} color="blue" />
+            <Pill label={`Temperature: ${zoneData.temp}`} color="amber" />
+            <Pill label={`Zone: ${zoneData.zone}`} color="green" />
           </View>
         </Card>
 
@@ -122,6 +122,6 @@ const styles = StyleSheet.create({
   mapLabelText: { fontSize: 10, color: Colors.primary, fontWeight: '500' },
   gpsRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: Spacing.sm },
   gpsDot: { width: 8, height: 8, borderRadius: 4 },
-  gpsText: { fontSize: 10, color: Colors.textSecondary, flex: 1 },
-  input: { height: 40, borderWidth: 0.5, borderColor: Colors.border, borderRadius: Radius.sm, backgroundColor: '#f9fdf7', paddingHorizontal: Spacing.sm, fontSize: 13, color: Colors.textPrimary },
+  gpsText: { fontSize: 11, color: Colors.textSecondary, flex: 1 },
+  input: { minHeight: 44, borderWidth: 0.5, borderColor: Colors.border, borderRadius: Radius.sm, backgroundColor: '#f9fdf7', paddingHorizontal: Spacing.sm, fontSize: 14, color: Colors.textPrimary },
 });
