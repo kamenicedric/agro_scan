@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Fonts, Radius, Spacing } from '../theme';
 
 // ─── Top Bar ─────────────────────────────────────────────────────────────────
@@ -105,6 +106,7 @@ export function FormField({ label, children, style }) {
 
 // ─── Bottom Tab Bar ───────────────────────────────────────────────────────────
 export function TabBar({ activeTab, onTabPress }) {
+  const insets = useSafeAreaInsets();
   const tabs = [
     { key: 'map', icon: 'navigate-outline', iconActive: 'navigate', label: 'Carte' },
     { key: 'history', icon: 'time-outline', iconActive: 'time', label: 'Historique' },
@@ -112,7 +114,7 @@ export function TabBar({ activeTab, onTabPress }) {
     { key: 'profile', icon: 'person-outline', iconActive: 'person', label: 'Profil' },
   ];
   return (
-    <View style={styles.tabBar}>
+    <View style={[styles.tabBar, { paddingBottom: Math.max(insets.bottom, 6) }]}>
       {tabs.map((t) => (
         <Pressable
           key={t.key}
