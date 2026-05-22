@@ -1,12 +1,34 @@
 import 'react-native-url-polyfill/auto';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './context/AuthContext';
 import RootNavigator from './navigation/AppNavigator';
+import { markStartup } from './utils/startupLogger';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function App() {
+  const [appReady, setAppReady] = useState(false);
+
+  useEffect(() => {
+    markStartup('App mounted');
+  }, []);
+
+  useEffect(() => {
+    if (!appReady) return;
+    SplashScreen.hideAsync()
+      .then(() => markStartup('Splash hidden'))
+      .catch(() => {});
+  }, [appReady]);
+
+  const handleNavigationReady = useCallback(() => {
+    markStartup('Navigation ready');
+    setAppReady(true);
+  }, []);
+
   return (
     <SafeAreaProvider>
       <StatusBar style="light" backgroundColor="#1a4a2e" />
@@ -21,7 +43,7 @@ export default function App() {
         </View>
         <View style={styles.content}>
           <AuthProvider>
-            <RootNavigator />
+            <RootNavigator onReady={handleNavigationReady} />
           </AuthProvider>
         </View>
       </View>

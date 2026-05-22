@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { supabase, AuthUser } from '../services/authService';
 import type { Session } from '@supabase/supabase-js';
+import { markStartup } from '../utils/startupLogger';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface AuthContextType {
@@ -56,8 +57,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    markStartup('Auth bootstrap started');
+
     // Charger la session au démarrage
     supabase.auth.getSession().then(({ data }) => {
+      markStartup('Initial session fetched', { hasSession: !!data.session });
       setSession(data.session);
       if (data.session) {
         setUser({
@@ -65,14 +69,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: data.session.user.email || '',
           nom: data.session.user.user_metadata?.nom,
         });
-        refreshProfile();
+        refreshProfile()
+          .then(() => markStartup('Initial profile refreshed'))
+          .catch(() => markStartup('Initial profile refresh failed'));
       }
+      markStartup('Auth loading complete');
       setLoading(false);
     });
 
     // Écouter les changements d'état auth (login/logout/refresh)
     const { data: listener } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
+        markStartup('Auth state changed', { event, hasSession: !!newSession });
         setSession(newSession);
         if (newSession?.user) {
           setUser({
@@ -80,7 +88,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             email: newSession.user.email || '',
             nom: newSession.user.user_metadata?.nom,
           });
-          await refreshProfile();
+          // Keep startup responsive: enrich profile in background.
+          refreshProfile()
+            .then(() => markStartup('Profile refreshed after auth event'))
+            .catch(() => markStartup('Profile refresh failed after auth event'));
         } else {
           setUser(null);
           setProfileId(null);

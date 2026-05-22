@@ -80,7 +80,9 @@ export default function AnalysisScreen({ navigation, route }: any) {
             <View style={s.loadingHeader}><ActivityIndicator color={Colors.primary} size="small"/><Text style={s.loadingTitle}>Pipeline IA...</Text></View>
             {STEPS.map((st,i)=><StepRow key={st} label={st} done={i<currentStep} active={i===currentStep}/>)}
             <View style={{marginTop:8,backgroundColor:Colors.accentSoft,borderRadius:Radius.sm,padding:8}}>
-              <Text style={{fontSize:11,color:Colors.primary,textAlign:'center'}}>MobileNetV2 -> SoilGrids -> Couleur</Text>
+              <Text style={{fontSize:11,color:Colors.primary,textAlign:'center'}}>
+                {'MobileNetV2 -> SoilGrids -> Couleur'}
+              </Text>
             </View>
           </Card>
         )}
@@ -88,7 +90,18 @@ export default function AnalysisScreen({ navigation, route }: any) {
         {result && (
           <>
             <View style={{flexDirection:'row',alignItems:'center',gap:8,marginBottom:Spacing.md}}>
-              <Pill label={method==='mobilenet'?'MobileNetV2':method==='soilgrids'?'SoilGrids':'Couleur'} color={method==='mobilenet'?'green':method==='soilgrids'?'blue':'amber'}/>
+              <Pill
+                label={
+                  method === 'cache_local'
+                    ? 'Hors ligne (cache local)'
+                    : method === 'mobilenet'
+                      ? 'MobileNetV2'
+                      : method === 'soilgrids'
+                        ? 'SoilGrids'
+                        : 'Couleur'
+                }
+                color={method === 'cache_local' ? 'amber' : method === 'mobilenet' ? 'green' : method === 'soilgrids' ? 'blue' : 'amber'}
+              />
               {result.confidence&&<Text style={{fontSize:11,color:Colors.textMuted}}>Confiance: {Math.round(result.confidence*100)}%</Text>}
             </View>
             <SectionTitle>Classification texture</SectionTitle>
