@@ -85,7 +85,7 @@ export default function RegisterScreen({ navigation }: any) {
     } else {
       Alert.alert(
         'Compte créé',
-        'Un email de confirmation vous a été envoyé. Vérifiez votre boîte mail puis connectez-vous.',
+        'Un email de confirmation vous a été envoyé. Vérifiez aussi Spam/Indésirables puis connectez-vous.',
         [{ text: 'Se connecter', onPress: () => navigation.navigate('Login') }]
       );
     }

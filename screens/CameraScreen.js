@@ -46,42 +46,59 @@ export default function CameraScreen({ navigation, route }) {
   const [facing] = useState('back');
 
   async function takePicture() {
-    if (cameraRef.current) {
+    try {
+      if (!cameraRef.current) {
+        Alert.alert('Caméra indisponible', 'Réouvre la caméra puis réessaie.');
+        return;
+      }
       const p = await cameraRef.current.takePictureAsync({ quality: 1, exif: true });
       await processPhoto(p);
       setCameraMode(false);
+    } catch (error) {
+      Alert.alert('Erreur photo', "Impossible de capturer l'image. Réessaie.");
     }
   }
 
   async function pickFromGallery() {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      quality: 1,
-      exif: true,
-    });
-    if (!result.canceled && result.assets[0]) {
-      await processPhoto(result.assets[0]);
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        exif: true,
+      });
+      if (!result.canceled && result.assets[0]) {
+        await processPhoto(result.assets[0]);
+      }
+    } catch (error) {
+      Alert.alert('Galerie indisponible', "Impossible d'ouvrir la galerie.");
     }
   }
 
   async function processPhoto(p) {
     setValidating(true);
     setWarnings([]);
-    const newWarnings = [];
+    try {
+      const newWarnings = [];
 
-    const qualityIssues = validatePhotoQuality(p);
-    newWarnings.push(...qualityIssues);
+      const qualityIssues = validatePhotoQuality(p);
+      newWarnings.push(...qualityIssues);
 
-    const blurScore = await computeLaplacianVariance(p.uri);
-    if (blurScore < 80) {
-      newWarnings.push(`Image floue détectée (score: ${Math.round(blurScore)}). Stabilisez votre appareil.`);
+      const blurScore = await computeLaplacianVariance(p.uri);
+      if (blurScore < 80) {
+        newWarnings.push(`Image floue détectée (score: ${Math.round(blurScore)}). Stabilisez votre appareil.`);
+      }
+
+      const width = Number(p?.width) || 0;
+      const height = Number(p?.height) || 0;
+      const mp = width && height ? ((width * height) / 1_000_000).toFixed(1) : '0.0';
+      setMpStatus(`${mp} MP`);
+      setWarnings(newWarnings);
+      setPhoto({ ...p, width, height, blurScore });
+    } catch (error) {
+      Alert.alert('Erreur traitement', "La photo n'a pas pu être traitée.");
+    } finally {
+      setValidating(false);
     }
-
-    const mp = ((p.width * p.height) / 1_000_000).toFixed(1);
-    setMpStatus(`${mp} MP`);
-    setWarnings(newWarnings);
-    setPhoto({ ...p, blurScore });
-    setValidating(false);
   }
 
   async function openCamera() {
@@ -96,12 +113,20 @@ export default function CameraScreen({ navigation, route }) {
   }
 
   function handleAnalyze() {
+    if (validating) return;
     if (!photo) {
       Alert.alert('Photo manquante', 'Veuillez prendre ou sélectionner une photo de la motte de terre.');
       return;
     }
     if (warnings.length > 0) {
-      Alert.alert('Qualité insuffisante', 'Corrigez les problèmes détectés avant de continuer.');
+      Alert.alert(
+        'Qualité de photo à améliorer',
+        'Des points de qualité ont été détectés. Vous pouvez reprendre la photo ou continuer quand même.',
+        [
+          { text: 'Reprendre', style: 'cancel' },
+          { text: 'Continuer', onPress: () => navigation.navigate('Analysis', { ...route.params, photo }) },
+        ]
+      );
       return;
     }
     navigation.navigate('Analysis', { ...route.params, photo });

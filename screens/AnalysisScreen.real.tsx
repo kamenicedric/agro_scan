@@ -53,8 +53,16 @@ export default function AnalysisScreen({ navigation, route }: any) {
   async function runAnalysis() {
     setError(null); setResult(null); setCurrentStep(0);
     try {
+      const resolvedUserId = profileId || user?.id;
+      if (!resolvedUserId) {
+        throw new Error("Session invalide. Reconnectez-vous puis relancez l'analyse.");
+      }
+      if (!photo?.uri) {
+        throw new Error("Aucune photo détectée. Retournez à l'étape capture.");
+      }
+
       const data = await runFullDiagnostic({
-        userId: profileId || user!.id, lat: location?.latitude??4.0511, lng: location?.longitude??9.7679,
+        userId: resolvedUserId, lat: location?.latitude??4.0511, lng: location?.longitude??9.7679,
         superficie: route.params?.superficie, historique: historique??[],
         photo: { uri: photo?.uri, width: photo?.width??0, height: photo?.height??0, blurScore: photo?.blurScore },
         onStep: (step) => setCurrentStep(step),

@@ -35,6 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading]   = useState(true);
   const [profileId, setProfileId] = useState<string | null>(null);
 
+  const AUTH_BOOTSTRAP_TIMEOUT_MS = 8000;
+
   // Charger le profil public depuis public.users
   const refreshProfile = useCallback(async () => {
     const { data: sess } = await supabase.auth.getSession();
@@ -59,23 +61,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     markStartup('Auth bootstrap started');
 
-    // Charger la session au démarrage
-    supabase.auth.getSession().then(({ data }) => {
-      markStartup('Initial session fetched', { hasSession: !!data.session });
-      setSession(data.session);
-      if (data.session) {
-        setUser({
-          id: data.session.user.id,
-          email: data.session.user.email || '',
-          nom: data.session.user.user_metadata?.nom,
-        });
-        refreshProfile()
-          .then(() => markStartup('Initial profile refreshed'))
-          .catch(() => markStartup('Initial profile refresh failed'));
-      }
-      markStartup('Auth loading complete');
+    let isMounted = true;
+
+    // Garde-fou: ne jamais laisser un spinner infini au démarrage.
+    const safetyTimeout = setTimeout(() => {
+      if (!isMounted) return;
+      markStartup('Auth bootstrap timeout fallback');
       setLoading(false);
-    });
+    }, AUTH_BOOTSTRAP_TIMEOUT_MS);
+
+    // Charger la session au démarrage
+    const bootstrapAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        if (!isMounted) return;
+        markStartup('Initial session fetched', { hasSession: !!data.session });
+        setSession(data.session);
+        if (data.session) {
+          setUser({
+            id: data.session.user.id,
+            email: data.session.user.email || '',
+            nom: data.session.user.user_metadata?.nom,
+          });
+          refreshProfile()
+            .then(() => markStartup('Initial profile refreshed'))
+            .catch((error) => markStartup('Initial profile refresh failed', { error }));
+        }
+      } catch (error) {
+        if (!isMounted) return;
+        markStartup('Initial session fetch failed', { error });
+        setSession(null);
+        setUser(null);
+        setProfileId(null);
+      } finally {
+        if (!isMounted) return;
+        clearTimeout(safetyTimeout);
+        markStartup('Auth loading complete');
+        setLoading(false);
+      }
+    };
+
+    bootstrapAuth();
 
     // Écouter les changements d'état auth (login/logout/refresh)
     const { data: listener } = supabase.auth.onAuthStateChange(
@@ -100,7 +126,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     );
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      clearTimeout(safetyTimeout);
+      listener.subscription.unsubscribe();
+    };
   }, [refreshProfile]);
 
   return (

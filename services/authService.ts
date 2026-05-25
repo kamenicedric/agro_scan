@@ -81,6 +81,17 @@ export async function resetPassword(email: string): Promise<AuthResult> {
   return { user: null };
 }
 
+// ─── Renvoyer email de confirmation ───────────────────────────────────────────
+export async function resendSignupConfirmation(email: string): Promise<AuthResult> {
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: email.trim().toLowerCase(),
+    options: { emailRedirectTo: 'agroscan://login' },
+  });
+  if (error) return { error: translateAuthError(error.message) };
+  return { user: null };
+}
+
 // ─── Récupérer la session actuelle ───────────────────────────────────────────
 export async function getSession() {
   const { data } = await supabase.auth.getSession();

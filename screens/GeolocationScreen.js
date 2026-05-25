@@ -107,7 +107,14 @@ export default function GeolocationScreen({ navigation }) {
 
         <PrimaryButton label="Continuer →" onPress={handleContinue} loading={loading} style={{ marginTop: Spacing.sm }} />
       </ScrollView>
-      <TabBar activeTab="map" onTabPress={(tab) => { if (tab === 'profile') navigation.navigate('Profile'); }} />
+      <TabBar
+        activeTab="map"
+        onTabPress={(tab) => {
+          if (tab === 'profile') navigation.navigate('Profile');
+          if (tab === 'history') navigation.navigate('History', { location: coords, superficie, userId: user?.id });
+          if (tab === 'scan') navigation.navigate('Camera', { location: coords, superficie, userId: user?.id });
+        }}
+      />
     </View>
   );
 }

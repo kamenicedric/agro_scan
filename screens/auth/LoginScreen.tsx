@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { signIn } from '../../services/authService';
+import { resendSignupConfirmation, signIn } from '../../services/authService';
 import { Colors, Fonts, Radius, Spacing } from '../../theme';
 
 export default function LoginScreen({ navigation }: any) {
@@ -37,9 +37,42 @@ export default function LoginScreen({ navigation }: any) {
     const { error } = await signIn(email, password);
     setLoading(false);
     if (error) {
-      Alert.alert('Connexion échouée', error);
+      const isEmailNotConfirmed = error.toLowerCase().includes('confirmer votre email');
+      if (isEmailNotConfirmed) {
+        Alert.alert(
+          'Email non confirmé',
+          `${error}\n\nVérifiez Spam/Indésirables. Vous pouvez aussi renvoyer le mail maintenant.`,
+          [
+            { text: 'Annuler', style: 'cancel' },
+            {
+              text: 'Renvoyer le mail',
+              onPress: handleResendConfirmation,
+            },
+          ]
+        );
+      } else {
+        Alert.alert('Connexion échouée', error);
+      }
     }
     // Si succès → AuthContext met à jour user → AppNavigator redirige automatiquement
+  }
+
+  async function handleResendConfirmation() {
+    if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
+      Alert.alert('Email invalide', "Entrez l'email du compte pour renvoyer la confirmation.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await resendSignupConfirmation(email);
+    setLoading(false);
+    if (error) {
+      Alert.alert('Envoi impossible', error);
+      return;
+    }
+    Alert.alert(
+      'Email renvoyé',
+      'Le mail de confirmation a été renvoyé. Vérifiez aussi le dossier Spam/Indésirables.'
+    );
   }
 
   return (

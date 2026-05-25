@@ -71,6 +71,7 @@ export default function RootNavigator({ onReady }) {
   }, [loading, user, onReady]);
 
 
+
   if (loading) {
     return (
       <View style={{ flex:1, backgroundColor: Colors.primary, alignItems:'center', justifyContent:'center' }}>

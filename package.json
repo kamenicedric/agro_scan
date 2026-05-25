@@ -14,14 +14,15 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@supabase/supabase-js": "^2.43.4",
-    "expo": "~54.0.0",
+    "expo": "~54.0.34",
     "expo-camera": "~17.0.10",
-    "expo-dev-client": "~6.0.20",
+    "expo-dev-client": "~6.0.21",
     "expo-image-manipulator": "~14.0.8",
-    "expo-image-picker": "~17.0.10",
+    "expo-image-picker": "~17.0.11",
     "expo-location": "~19.0.8",
+    "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
-    "expo-updates": "~29.0.16",
+    "expo-updates": "~29.0.17",
     "react": "19.1.0",
     "react-native": "0.81.5",
     "react-native-maps": "1.20.1",
@@ -32,7 +33,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@types/react": "~19.1.10",
-    "babel-preset-expo": "^55.0.18",
+    "babel-preset-expo": "~54.0.10",
     "typescript": "^5.3.0"
   },
   "private": true

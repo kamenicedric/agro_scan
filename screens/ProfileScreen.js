@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Switch,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
@@ -17,6 +18,7 @@ import {
   TabBar,
 } from '../components/SharedComponents';
 import { Colors, Spacing, Radius, Fonts } from '../theme';
+import { signOut } from '../services/authService';
 
 // ─── Mock history data ────────────────────────────────────────────────────────
 const MOCK_HISTORY = [
@@ -90,9 +92,23 @@ export default function ProfileScreen({ navigation }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [offlineModeEnabled, setOfflineModeEnabled] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [logoutLoading, setLogoutLoading] = useState(false);
 
   function handleHistoryPress(item) {
     setSelectedItem(item);
+  }
+
+  async function handleLogout() {
+    if (logoutLoading) return;
+    setLogoutLoading(true);
+    try {
+      await signOut();
+      // AuthContext écoute la déconnexion et redirige automatiquement vers Login.
+    } catch (error) {
+      Alert.alert('Déconnexion impossible', "Réessaie dans quelques instants.");
+    } finally {
+      setLogoutLoading(false);
+    }
   }
 
   const stats = [
@@ -207,6 +223,16 @@ export default function ProfileScreen({ navigation }) {
           onPress={() => navigation.navigate('Geolocation')}
           style={{ marginTop: Spacing.sm }}
         />
+        <TouchableOpacity
+          style={[styles.logoutBtn, logoutLoading && styles.logoutBtnDisabled]}
+          onPress={handleLogout}
+          disabled={logoutLoading}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.logoutBtnText}>
+            {logoutLoading ? 'Déconnexion...' : 'Se déconnecter'}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
 
       <TabBar
@@ -283,4 +309,20 @@ const styles = StyleSheet.create({
   settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   settingLabel: { fontSize: 13, fontWeight: Fonts.medium, color: Colors.textPrimary },
   settingDesc: { fontSize: 11, color: Colors.textMuted, marginTop: 2 },
+  logoutBtn: {
+    marginTop: Spacing.sm,
+    backgroundColor: Colors.redBg,
+    borderWidth: 1,
+    borderColor: Colors.red,
+    borderRadius: Radius.md,
+    minHeight: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoutBtnDisabled: { opacity: 0.6 },
+  logoutBtnText: {
+    color: Colors.red,
+    fontSize: 13,
+    fontWeight: Fonts.semibold,
+  },
 });
